@@ -155,10 +155,12 @@ for (index in fruitsRange) {
     }
 }
 
-fruits
-    .filter { it.startsWith("a") }
-    .sortedBy { it }
+fruits//.asSequence()
     .map { it.toUpperCase() }
+    .onEachIndexed { index, _ -> println(index) }
+    .filter { it.startsWith("A") }
+    //.take(1)
+    .sortedBy { it }
     .forEach { println(it) }
 
 */
