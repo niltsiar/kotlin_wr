@@ -163,4 +163,12 @@ fruits//.asSequence()
     .sortedBy { it }
     .forEach { println(it) }
 
+
+val toBeUsedByLazy = StringBuilder("Lazy")
+val lazyString by lazy {
+    "I'm $toBeUsedByLazy"
+}
+toBeUsedByLazy.append("yyyyyyy")
+println(lazyString)
+
 */
