@@ -31,9 +31,9 @@ val anotherDouble = 1.0
 
 val thisIsAFinalVariable = "I'm a final variable"
 var thisIsAMutableVariable = "I can mutate"
-thisIsAMutableVariable = "This is my new value"
+thisIsAMutableVariable = "This is my new value (┛ಠ_ಠ)┛彡┻━┻"
 
-//thisIsAFinalVariable = "This will be an error"
+//thisIsAFinalVariable = "This will be an error ❌"
 
 val stringBuilder = StringBuilder()
 stringBuilder.append("This is")
@@ -69,7 +69,8 @@ fun sum(a: Int, b: Int): Int {
     return a + b
 }
 
-val isEven = { i: Int -> i % 2 == 0 }
+val isEven: (Int) -> Boolean = { i: Int -> i % 2 == 0 }
+val isOdd = { i: Int -> !isEven(i) }
 
 sum(1, 2)
 isEven(1)
@@ -116,6 +117,7 @@ compute(3) {
 //.----)   |   |  |  |  |  /  _____  \  |  |\  \----.    |  |        |  `----. /  _____  \  .----)   |       |  |
 //|_______/    |__|  |__| /__/     \__\ | _| `._____|    |__|         \______|/__/     \__\ |_______/        |__|
 //
+
 fun computeOverAny(i: Any, block: (Int) -> Boolean): Boolean? {
     //block(i)
 
@@ -134,6 +136,7 @@ fun computeOverAny(i: Any, block: (Int) -> Boolean): Boolean? {
 //|  |  |  | |  | .----)   |   |  `----.|  |____ |  `----. /  _____  \  |  |\   | |  |____  /  _____  \
 //|__|  |__| |__| |_______/     \______||_______||_______|/__/     \__\ |__| \__| |_______|/__/     \__\
 //
+
 val fruits = listOf("banana", "avocado", "apple", "kiwifruit")
 for (item in fruits) {
     println(item)
@@ -168,7 +171,9 @@ val toBeUsedByLazy = StringBuilder("Lazy")
 val lazyString by lazy {
     "I'm $toBeUsedByLazy"
 }
-toBeUsedByLazy.append("yyyyyyy")
+toBeUsedByLazy.append("yyyyyyy 🥱")
+println(lazyString)
+toBeUsedByLazy.append(" 🤷‍")
 println(lazyString)
 
 */
