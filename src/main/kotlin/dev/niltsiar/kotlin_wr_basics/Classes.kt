@@ -20,3 +20,4 @@ abstract class Member(
 data class Subscriber(override val name: String) : Member(name)
 data class DungeonMaster(override val name: String) : Member(name)
 data class Minion(override val name: String, val position: String) : Member(name)
+object FuckingOverlord : Member("SuperCoco")
