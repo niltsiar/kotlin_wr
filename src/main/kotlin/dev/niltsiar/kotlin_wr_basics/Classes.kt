@@ -32,7 +32,16 @@ operator fun Business.contains(member: Member): Boolean = members.contains(membe
 
 abstract class Member(
     open val name: String
-)
+) {
+
+    infix fun subscribeTo(business: Business) {
+        business += this
+    }
+
+    infix fun cancelSubscriptionFrom(business: Business) {
+        business -= this
+    }
+}
 
 data class Subscriber(override val name: String) : Member(name)
 data class DungeonMaster(override val name: String) : Member(name)

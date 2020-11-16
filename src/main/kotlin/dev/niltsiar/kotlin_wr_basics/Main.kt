@@ -30,6 +30,11 @@ fun main() {
     val (wrName, wrMembers) = wr
     println(wrName)
     println(wrMembers)
+
+    val jsSubscriber = Subscriber("JS fanatic")
+
+    jsSubscriber subscribeTo wr
+    jsSubscriber cancelSubscriptionFrom wr
 }
 
 fun DungeonMaster.sayIntro() {
