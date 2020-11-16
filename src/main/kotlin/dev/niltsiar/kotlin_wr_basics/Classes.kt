@@ -11,8 +11,23 @@ class Business(
     val members: List<Member>
         get() = _members
 
-    fun addMember(member: Member) = _members.add(member)
+    operator fun plusAssign(member: Member) {
+        _members.add(member)
+    }
+
+    operator fun minusAssign(member: Member) {
+        _members.remove(member)
+    }
+
+    operator fun get(index: Int): Member = _members[index]
+
+    operator fun get(name: String): Member? = _members.find { it.name == name }
+
+    operator fun component1(): String = name
+    operator fun component2(): List<Member> = members
 }
+
+operator fun Business.contains(member: Member): Boolean = members.contains(member)
 
 
 abstract class Member(
@@ -22,4 +37,6 @@ abstract class Member(
 data class Subscriber(override val name: String) : Member(name)
 data class DungeonMaster(override val name: String) : Member(name)
 data class Minion(override val name: String, val position: String) : Member(name)
-object FuckingOverlord : Member("SuperCoco")
+object FuckingOverlord : Member("SuperCoco") {
+    override fun toString(): String = name
+}

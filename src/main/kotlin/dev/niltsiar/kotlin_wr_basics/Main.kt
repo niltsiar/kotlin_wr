@@ -14,12 +14,22 @@ fun main() {
 
     dani.sayIntro()
 
-    wr.addMember(dani)
-    wr.addMember(juanjo)
-    wr.addMember(niltsiar)
+    wr += dani
+    wr += juanjo
+    wr += niltsiar
+    wr += FuckingOverlord
 
     println(wr.members)
 
+    println(wr[1])
+    println(wr["Borja"])
+    println(juanjo in wr)
+
+    wr -= FuckingOverlord
+
+    val (wrName, wrMembers) = wr
+    println(wrName)
+    println(wrMembers)
 }
 
 fun DungeonMaster.sayIntro() {
