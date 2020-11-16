@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
 package dev.niltsiar.kotlin_wr_basics
 
@@ -10,6 +10,8 @@ class Business(
     private val _members: MutableList<Member> = members.toMutableList()
     val members: List<Member>
         get() = _members
+
+    fun addMember(member: Member) = _members.add(member)
 }
 
 

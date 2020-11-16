@@ -14,6 +14,12 @@ fun main() {
 
     dani.sayIntro()
 
+    wr.addMember(dani)
+    wr.addMember(juanjo)
+    wr.addMember(niltsiar)
+
+    println(wr.members)
+
 }
 
 fun DungeonMaster.sayIntro() {
