@@ -7,6 +7,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
+import io.ktor.util.pipeline.*
 import java.util.*
 
 private val todos = mutableMapOf<String, ToDo>()
@@ -54,23 +55,25 @@ fun Route.createTodo() = post("/todos") {
 }
 
 fun Route.modifyTodo() = put("/todos/{id}") {
-    val oldTodo = call.parameters["id"]?.let { todos[it] }
-    if (null == oldTodo) {
-        call.respond(HttpStatusCode.BadRequest, mapOf("error" to "invalid id"))
-    } else {
-        val newTodo = call.receive<ToDo>()
-        val modifiedTodo = newTodo.copy(id = oldTodo.id)
-        todos.replace(modifiedTodo.id, modifiedTodo)
-        call.respond(HttpStatusCode.OK, modifiedTodo)
-    }
+    val oldTodo = getOldTodo() ?: return@put
+
+    val newTodo = call.receive<ToDo>()
+    val modifiedTodo = newTodo.copy(id = oldTodo.id)
+    todos.replace(modifiedTodo.id, modifiedTodo)
+    call.respond(HttpStatusCode.OK, modifiedTodo)
 }
 
 fun Route.deleteTodo() = delete("/todos/{id}") {
+    val oldTodo = getOldTodo() ?: return@delete
+
+    todos.remove(oldTodo.id)
+    call.respond(HttpStatusCode.OK)
+}
+
+suspend fun PipelineContext<Unit, ApplicationCall>.getOldTodo(): ToDo? {
     val oldTodo = call.parameters["id"]?.let { todos[it] }
     if (null == oldTodo) {
         call.respond(HttpStatusCode.BadRequest, mapOf("error" to "invalid id"))
-    } else {
-        todos.remove(oldTodo.id)
-        call.respond(HttpStatusCode.OK)
     }
+    return oldTodo
 }
