@@ -1,0 +1,2 @@
+DELETE http://localhost:8080/api/todos/!YOUR_ID_HERE!
+Content-Type: application/json

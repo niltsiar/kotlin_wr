@@ -36,6 +36,7 @@ fun Route.api() = route("/api") {
     getTodos()
     createTodo()
     modifyTodo()
+    deleteTodo()
 }
 
 fun Route.getTodos() = get("/todos") {
@@ -61,5 +62,15 @@ fun Route.modifyTodo() = put("/todos/{id}") {
         val modifiedTodo = newTodo.copy(id = oldTodo.id)
         todos.replace(modifiedTodo.id, modifiedTodo)
         call.respond(HttpStatusCode.OK, modifiedTodo)
+    }
+}
+
+fun Route.deleteTodo() = delete("/todos/{id}") {
+    val oldTodo = call.parameters["id"]?.let { todos[it] }
+    if (null == oldTodo) {
+        call.respond(HttpStatusCode.BadRequest, mapOf("error" to "invalid id"))
+    } else {
+        todos.remove(oldTodo.id)
+        call.respond(HttpStatusCode.OK)
     }
 }
