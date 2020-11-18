@@ -35,6 +35,7 @@ fun Application.api() {
 fun Route.api() = route("/api") {
     getTodos()
     createTodo()
+    modifyTodo()
 }
 
 fun Route.getTodos() = get("/todos") {
@@ -49,4 +50,16 @@ fun Route.createTodo() = post("/todos") {
     val newTodo = todo.copy(id = randomId)
     todos += newTodo.id to newTodo
     call.respond(HttpStatusCode.Created, newTodo)
+}
+
+fun Route.modifyTodo() = put("/todos/{id}") {
+    val oldTodo = call.parameters["id"]?.let { todos[it] }
+    if (null == oldTodo) {
+        call.respond(HttpStatusCode.BadRequest, mapOf("error" to "invalid id"))
+    } else {
+        val newTodo = call.receive<ToDo>()
+        val modifiedTodo = newTodo.copy(id = oldTodo.id)
+        todos.replace(modifiedTodo.id, modifiedTodo)
+        call.respond(HttpStatusCode.OK, modifiedTodo)
+    }
 }

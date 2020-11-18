@@ -1,0 +1,6 @@
+PUT http://localhost:8080/api/todos/!YOUR_ID_HERE!
+Content-Type: application/json
+
+{
+  "text": "Modificando un todo desde IntelliJ"
+}
