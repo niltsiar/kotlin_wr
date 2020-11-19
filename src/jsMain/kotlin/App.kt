@@ -3,7 +3,9 @@ package dev.niltsiar.kotlin_wr
 import dev.fritz2.binding.*
 import dev.fritz2.dom.append
 import dev.fritz2.dom.html.HtmlElements
+import dev.fritz2.dom.html.Keys
 import dev.fritz2.dom.html.render
+import dev.fritz2.dom.key
 import dev.fritz2.dom.states
 import dev.fritz2.dom.values
 import dev.fritz2.lenses.buildLens
@@ -12,10 +14,7 @@ import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import kotlinx.browser.window
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 
 data class Filter(val text: String, val function: (List<ToDo>) -> List<ToDo>)
 
@@ -122,6 +121,13 @@ fun main() {
                     .render { todo ->
                         val elementStore = todoStore.detach(todo, ToDo::id)
                         elementStore.syncBy(todoStore.modify)
+
+                        val textStore = elementStore.sub(
+                            buildLens(
+                                "text",
+                                { it.text },
+                                { element, text -> element.copy(text = text) })
+                        )
                         val completedStore = elementStore.sub(
                             buildLens(
                                 "completed",
@@ -130,9 +136,16 @@ fun main() {
                             )
                         )
 
+                        val editingStore = object : RootStore<Boolean>(false) {}
+
                         li {
                             attr("data-id", todo.id)
-                            className = elementStore.data.map { if (it.completed) "completed" else String.empty }
+                            classMap = elementStore.data.combine(editingStore.data) { todo, editing ->
+                                mapOf(
+                                    "completed" to todo.completed,
+                                    "editing" to editing
+                                )
+                            }
 
                             div("view") {
                                 input("toggle") {
@@ -142,11 +155,30 @@ fun main() {
                                     changes.states() handledBy completedStore.update
                                 }
                                 label {
-                                    +todo.text
+                                    textStore.data.bind()
+
+                                    dblclicks.map { true } handledBy editingStore.update
                                 }
                                 button("destroy") {
                                     clicks.events.map { todo } handledBy todoStore.remove
                                 }
+                            }
+
+                            input("edit") {
+                                value = textStore.data
+                                changes.values() handledBy textStore.update
+
+                                editingStore.data.map { isEditing ->
+                                    if (isEditing) domNode.apply {
+                                        focus()
+                                        select()
+                                    }
+                                    isEditing.toString()
+                                }.watch()
+                                merge(
+                                    blurs.map { false },
+                                    keyups.key().filter { it.isKey(Keys.Enter) }.map { false }
+                                ) handledBy editingStore.update
                             }
                         }
                     }.bind()
