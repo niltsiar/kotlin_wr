@@ -53,8 +53,24 @@ fun main() {
             }
         }
 
+        val toggleAll = handle { todos, toggle: Boolean ->
+            val modifiedTodos = todos.mapNotNull {
+                if (it.completed != toggle) {
+                    it.id to it.copy(completed = toggle)
+                } else {
+                    null
+                }
+            }.toMap()
+            modifiedTodos.forEach { restClient.modifyTodo(it.value) }
+            todos.map { modifiedTodos.getOrElse(it.id) { it } }
+        }
+
         val empty = data.map { it.isEmpty() }.distinctUntilChanged()
         val count = data.map { todos -> todos.count { !it.completed } }.distinctUntilChanged()
+        val allChecked = data.map { todos ->
+            todos.isNotEmpty() && todos.all { it.completed }
+        }.distinctUntilChanged()
+
 
         init {
             action() handledBy load
@@ -78,6 +94,9 @@ fun main() {
         section("main") {
             input("toggle-all", id = "toggle-all") {
                 type = const("checkbox")
+                checked = todoStore.allChecked
+
+                changes.states() handledBy todoStore.toggleAll
             }
             label(`for` = "toggle-all") {
                 text("Marcar todas como completado")
