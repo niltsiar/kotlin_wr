@@ -1,10 +1,32 @@
 package dev.niltsiar.kotlin_wr
 
+import dev.fritz2.binding.RootStore
 import dev.fritz2.binding.const
 import dev.fritz2.dom.append
 import dev.fritz2.dom.html.render
+import io.ktor.client.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import kotlinx.browser.window
 
 fun main() {
+
+    val todoStore = object : RootStore<List<ToDo>>(emptyList(), dropInitialData = true, id = "todos") {
+
+        private val jsonClient = HttpClient {
+            install(JsonFeature) {
+                serializer = KotlinxSerializer()
+            }
+        }
+        private val restClient = RestClient(jsonClient, window.location.origin)
+
+        val load = handle { restClient.getTodos() }
+
+        val add = handle<String> { todos, text ->
+            val newTodo = restClient.addTodo(ToDo(text = text))
+            todos + newTodo
+        }
+    }
 
     val inputHeader = render {
         header {
