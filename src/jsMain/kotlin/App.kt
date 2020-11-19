@@ -17,5 +17,25 @@ fun main() {
         }
     }
 
-    append("todoapp", inputHeader)
+    val mainSection = render {
+        section("main") {
+            input("toggle-all", id = "toggle-all") {
+                type = const("checkbox")
+            }
+            label(`for` = "toggle-all") {
+                text("Marcar todas como completado")
+            }
+            ul("todo-list") {
+
+            }
+        }
+    }
+
+    val footer = render {
+        footer("footer") {
+
+        }
+    }
+
+    append("todoapp", inputHeader, mainSection, footer)
 }
