@@ -8,6 +8,7 @@ import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
 fun main() {
@@ -26,6 +27,11 @@ fun main() {
         val add = handle<String> { todos, text ->
             val newTodo = restClient.addTodo(ToDo(text = text))
             todos + newTodo
+        }
+
+        val remove = handle { todos, toDelete: ToDo ->
+            restClient.deleteTodo(toDelete)
+            todos - toDelete
         }
 
         init {
@@ -63,6 +69,9 @@ fun main() {
                             div("view") {
                                 label {
                                     +todo.text
+                                }
+                                button("destroy") {
+                                    clicks.events.map { todo } handledBy todoStore.remove
                                 }
                             }
                         }
