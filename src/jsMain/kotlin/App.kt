@@ -2,19 +2,32 @@ package dev.niltsiar.kotlin_wr
 
 import dev.fritz2.binding.*
 import dev.fritz2.dom.append
+import dev.fritz2.dom.html.HtmlElements
 import dev.fritz2.dom.html.render
 import dev.fritz2.dom.states
 import dev.fritz2.dom.values
 import dev.fritz2.lenses.buildLens
+import dev.fritz2.routing.router
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
+data class Filter(val text: String, val function: (List<ToDo>) -> List<ToDo>)
+
+val filters = mapOf(
+    "all" to Filter("Todos") { it },
+    "active" to Filter("Activos") { toDos -> toDos.filter { !it.completed } },
+    "completed" to Filter("Completados") { toDos -> toDos.filter { it.completed } }
+)
+
 fun main() {
+
+    val router = router("all")
 
     val todoStore = object : RootStore<List<ToDo>>(emptyList(), dropInitialData = true, id = "todos") {
 
@@ -102,7 +115,10 @@ fun main() {
                 text("Marcar todas como completado")
             }
             ul("todo-list") {
-                todoStore.data.each()
+                todoStore.data.combine(router) { todos, route ->
+                    filters[route]?.function?.invoke(todos) ?: todos
+                }
+                    .each(ToDo::id)
                     .render { todo ->
                         val elementStore = todoStore.detach(todo, ToDo::id)
                         elementStore.syncBy(todoStore.modify)
@@ -138,6 +154,16 @@ fun main() {
         }
     }
 
+    fun HtmlElements.filter(text: String, route: String) {
+        li {
+            a {
+                className = router.map { if (it == route) "selected" else String.empty }
+                href = const("#$route")
+                text(text)
+            }
+        }
+    }
+
     val footer = render {
         footer("footer") {
             className = todoStore.empty.map { isEmpty -> if (isEmpty) "hidden" else String.empty }
@@ -150,8 +176,12 @@ fun main() {
                 }
             }
 
+            ul("filters") {
+                filters.forEach { filter(it.value.text, it.key) }
+            }
+
             button("clear-completed") {
-                text("Borrar tareas completadas")
+                text("Borrar completadas")
 
                 clicks handledBy todoStore.clearCompleted
             }
