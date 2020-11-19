@@ -1,13 +1,14 @@
 package dev.niltsiar.kotlin_wr
 
-import dev.fritz2.binding.RootStore
-import dev.fritz2.binding.const
+import dev.fritz2.binding.*
 import dev.fritz2.dom.append
 import dev.fritz2.dom.html.render
+import dev.fritz2.dom.values
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.onEach
 
 fun main() {
 
@@ -26,6 +27,10 @@ fun main() {
             val newTodo = restClient.addTodo(ToDo(text = text))
             todos + newTodo
         }
+
+        init {
+            action() handledBy load
+        }
     }
 
     val inputHeader = render {
@@ -35,6 +40,8 @@ fun main() {
             input("new-todo") {
                 placeholder = const("Oye, ¿qué tienes que hacer? 🤔")
                 autofocus = const(true)
+
+                changes.values().onEach { domNode.value = String.empty } handledBy todoStore.add
             }
         }
     }
@@ -48,7 +55,18 @@ fun main() {
                 text("Marcar todas como completado")
             }
             ul("todo-list") {
+                todoStore.data.each()
+                    .render { todo ->
+                        li {
+                            attr("data-id", todo.id)
 
+                            div("view") {
+                                label {
+                                    +todo.text
+                                }
+                            }
+                        }
+                    }.bind()
             }
         }
     }
