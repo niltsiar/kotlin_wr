@@ -3,7 +3,9 @@ package dev.niltsiar.kotlin_wr
 import dev.fritz2.binding.*
 import dev.fritz2.dom.append
 import dev.fritz2.dom.html.render
+import dev.fritz2.dom.states
 import dev.fritz2.dom.values
+import dev.fritz2.lenses.buildLens
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
@@ -32,6 +34,15 @@ fun main() {
         val remove = handle { todos, toDelete: ToDo ->
             restClient.deleteTodo(toDelete)
             todos - toDelete
+        }
+
+        val modify = handle<ToDo> { todos, modifiedTodo ->
+            restClient.modifyTodo(modifiedTodo)
+            val index = todos.indexOfFirst { it.id == modifiedTodo.id }
+            val mutableTodos = todos.toMutableList()
+            mutableTodos.removeAt(index)
+            mutableTodos.add(index, modifiedTodo)
+            mutableTodos
         }
 
         init {
@@ -63,10 +74,27 @@ fun main() {
             ul("todo-list") {
                 todoStore.data.each()
                     .render { todo ->
+                        val elementStore = todoStore.detach(todo, ToDo::id)
+                        elementStore.syncBy(todoStore.modify)
+                        val completedStore = elementStore.sub(
+                            buildLens(
+                                "completed",
+                                { it.completed },
+                                { element, completed -> element.copy(completed = completed) }
+                            )
+                        )
+
                         li {
                             attr("data-id", todo.id)
+                            className = elementStore.data.map { if (it.completed) "completed" else String.empty }
 
                             div("view") {
+                                input("toggle") {
+                                    type = const("checkbox")
+                                    checked = completedStore.data
+
+                                    changes.states() handledBy completedStore.update
+                                }
                                 label {
                                     +todo.text
                                 }
