@@ -46,6 +46,13 @@ fun main() {
             mutableTodos
         }
 
+        val clearCompleted = handle { todos ->
+            todos.partition(ToDo::completed).let { (completed, uncompleted) ->
+                completed.forEach { restClient.deleteTodo(it) }
+                uncompleted
+            }
+        }
+
         val empty = data.map { it.isEmpty() }.distinctUntilChanged()
         val count = data.map { todos -> todos.count { !it.completed } }.distinctUntilChanged()
 
@@ -122,6 +129,12 @@ fun main() {
                         "$it tarea${if (it != 1) "s" else String.empty} pendiente${if (it != 1) "s" else String.empty}"
                     }.bind()
                 }
+            }
+
+            button("clear-completed") {
+                text("Borrar tareas completadas")
+
+                clicks handledBy todoStore.clearCompleted
             }
         }
     }
