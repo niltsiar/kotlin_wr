@@ -33,18 +33,18 @@ fun Application.api() {
     }
 }
 
-fun Route.api() = route("/api") {
+fun Route.api() = route(apiPath) {
     getTodos()
     createTodo()
     modifyTodo()
     deleteTodo()
 }
 
-fun Route.getTodos() = get("/todos") {
+fun Route.getTodos() = get(todoPath) {
     call.respond(todos.values.toList())
 }
 
-fun Route.createTodo() = post("/todos") {
+fun Route.createTodo() = post(todoPath) {
     val todo = call.receive<ToDo>()
     val randomId = generateSequence { UUID.randomUUID().toString() }
         .filter { uuid -> uuid !in todos }
@@ -54,7 +54,7 @@ fun Route.createTodo() = post("/todos") {
     call.respond(HttpStatusCode.Created, newTodo)
 }
 
-fun Route.modifyTodo() = put("/todos/{id}") {
+fun Route.modifyTodo() = put("$todoPath/{id}") {
     val oldTodo = getOldTodo() ?: return@put
 
     val newTodo = call.receive<ToDo>()
@@ -63,7 +63,7 @@ fun Route.modifyTodo() = put("/todos/{id}") {
     call.respond(HttpStatusCode.OK, modifiedTodo)
 }
 
-fun Route.deleteTodo() = delete("/todos/{id}") {
+fun Route.deleteTodo() = delete("$todoPath/{id}") {
     val oldTodo = getOldTodo() ?: return@delete
 
     todos.remove(oldTodo.id)
