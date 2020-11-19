@@ -10,6 +10,7 @@ import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
@@ -44,6 +45,9 @@ fun main() {
             mutableTodos.add(index, modifiedTodo)
             mutableTodos
         }
+
+        val empty = data.map { it.isEmpty() }.distinctUntilChanged()
+        val count = data.map { todos -> todos.count { !it.completed } }.distinctUntilChanged()
 
         init {
             action() handledBy load
@@ -110,7 +114,15 @@ fun main() {
 
     val footer = render {
         footer("footer") {
+            className = todoStore.empty.map { isEmpty -> if (isEmpty) "hidden" else String.empty }
 
+            span("todo-count") {
+                strong {
+                    todoStore.count.map {
+                        "$it tarea${if (it != 1) "s" else String.empty} pendiente${if (it != 1) "s" else String.empty}"
+                    }.bind()
+                }
+            }
         }
     }
 
