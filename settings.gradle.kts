@@ -10,3 +10,4 @@ rootProject.name = "kotlin_wr"
 
 include(":common")
 include(":web")
+include(":androidApp")
