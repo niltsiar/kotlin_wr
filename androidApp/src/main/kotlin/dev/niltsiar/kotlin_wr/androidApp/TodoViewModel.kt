@@ -36,4 +36,18 @@ class TodoViewModel : ViewModel() {
             _todos.value = _todos.value + newTodo
         }
     }
+
+    fun modifyTodo(todo: ToDo) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val modifiedTodo = restClient.modifyTodo(todo)
+            _todos.value = _todos.value.map { if (it.id == todo.id) todo else it }
+        }
+    }
+
+    fun deleteTodo(todo: ToDo) {
+        viewModelScope.launch(Dispatchers.IO) {
+            restClient.deleteTodo(todo)
+            _todos.value = _todos.value.filterNot { it.id == todo.id }
+        }
+    }
 }

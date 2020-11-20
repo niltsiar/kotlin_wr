@@ -17,7 +17,10 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: TodoViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
     private val adapter by lazy {
-        TodoAdapter()
+        TodoAdapter(
+            deleteAction = { viewModel.deleteTodo(it) },
+            completedAction = { viewModel.modifyTodo(it) }
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
