@@ -23,6 +23,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:${Versions.appCompat}")
     implementation("androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}")
     implementation("androidx.fragment:fragment-ktx:${Versions.fragment}")
+    implementation("io.github.reactivecircus.flowbinding:flowbinding-android:${Versions.flowbinding}")
 
     implementation("io.ktor:ktor-client-core:${Versions.ktor}")
     implementation("io.ktor:ktor-client-okhttp:${Versions.ktor}")

@@ -12,4 +12,5 @@ object Versions {
     const val appCompat = "1.2.0"
     const val constraintLayout = "2.0.4"
     const val fragment = "1.2.4"
+    const val flowbinding = "1.0.0-beta02"
 }

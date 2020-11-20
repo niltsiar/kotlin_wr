@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import dev.niltsiar.kotlin_wr.androidApp.databinding.ActivityMainBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import reactivecircus.flowbinding.android.view.clicks
+import reactivecircus.flowbinding.android.widget.textChanges
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,12 +36,17 @@ class MainActivity : AppCompatActivity() {
             todos.layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
             todos.addItemDecoration(VerticalMarginItemDecoration(resources.getDimensionPixelSize(R.dimen.activity_vertical_margin)))
 
-            addNewTodo.setOnClickListener {
+            addNewTodo.clicks().onEach {
                 viewModel.addTodo(newTodoText.text.toString())
                 hideKeyboard()
                 newTodoText.text?.clear()
                 newTodoText.clearFocus()
-            }
+            }.launchIn(lifecycleScope)
+
+            newTodoText.textChanges()
+                .onEach {
+                    addNewTodo.isEnabled = !it.isBlank()
+                }.launchIn(lifecycleScope)
 
             adapter.submitList(emptyList())
             todos.adapter = adapter
@@ -51,8 +58,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.todos.onEach { updatedTodos ->
             adapter.submitList(updatedTodos)
-        }
-            .launchIn(lifecycleScope)
+        }.launchIn(lifecycleScope)
 
         viewModel.loadTodos()
     }
