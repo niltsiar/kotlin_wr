@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  style="@style/Widget.Demo.CardView"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content">
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.Guideline
+      android:id="@+id/left_guideline"
+      android:layout_width="@dimen/zero"
+      android:layout_height="@dimen/zero"
+      android:orientation="vertical"
+      app:layout_constraintGuide_begin="@dimen/activity_horizontal_margin" />
+
+    <androidx.constraintlayout.widget.Guideline
+      android:id="@+id/right_guideline"
+      android:layout_width="@dimen/zero"
+      android:layout_height="@dimen/zero"
+      android:orientation="vertical"
+      app:layout_constraintGuide_end="@dimen/activity_horizontal_margin" />
+
+    <ImageView
+      android:id="@+id/action_completed"
+      android:layout_width="@dimen/zero"
+      android:layout_height="@dimen/zero"
+      app:layout_constraintLeft_toLeftOf="@id/left_guideline"
+      app:layout_constraintTop_toTopOf="@id/todo"
+      app:layout_constraintBottom_toBottomOf="@id/todo"
+      app:layout_constraintRight_toLeftOf="@id/todo"
+      app:layout_constraintWidth_percent="@dimen/action_icon_width_percent"
+      app:layout_constraintDimensionRatio="1:1"
+      app:tint="@color/light_gray"
+      app:srcCompat="@drawable/ic_completed" />
+
+    <TextView
+      android:id="@+id/todo"
+      android:layout_width="@dimen/zero"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintLeft_toRightOf="@id/action_completed"
+      app:layout_constraintRight_toLeftOf="@id/action_delete"
+      app:layout_constraintTop_toTopOf="parent"
+      tools:text="Crear proyectos Kotlin multiplataforma" />
+
+    <ImageView
+      android:id="@+id/action_delete"
+      android:layout_width="@dimen/zero"
+      android:layout_height="@dimen/zero"
+      app:layout_constraintRight_toRightOf="@id/right_guideline"
+      app:layout_constraintLeft_toRightOf="@id/todo"
+      app:layout_constraintTop_toTopOf="@id/todo"
+      app:layout_constraintBottom_toBottomOf="@id/todo"
+      app:layout_constraintWidth_percent="@dimen/action_icon_width_percent"
+      app:layout_constraintDimensionRatio="1:1"
+      app:tint="@color/light_gray"
+      app:srcCompat="@drawable/ic_delete" />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

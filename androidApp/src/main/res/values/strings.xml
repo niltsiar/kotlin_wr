@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Trello Malandriner</string>
-    <string name="activity_title">¿Trello? 🙄</string>
+  <string name="app_name">Trello Malandriner</string>
+  <string name="activity_title">¿Trello? 🙄</string>
+  <string name="new_todo_hint">Oye, ¿qué tienes que hacer? 🤔</string>
+  <string name="add_todo">Pa&#8217; la lista</string>
 </resources>
