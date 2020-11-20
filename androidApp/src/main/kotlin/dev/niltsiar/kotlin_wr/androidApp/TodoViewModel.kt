@@ -1,6 +1,5 @@
 package dev.niltsiar.kotlin_wr.androidApp
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.niltsiar.kotlin_wr.RestClient
@@ -28,7 +27,6 @@ class TodoViewModel : ViewModel() {
     fun loadTodos() {
         viewModelScope.launch(Dispatchers.IO) {
             _todos.value = restClient.getTodos()
-            Log.i("TODO", _todos.toString())
         }
     }
 
