@@ -11,4 +11,5 @@ object Versions {
     const val material = "1.2.1"
     const val appCompat = "1.2.0"
     const val constraintLayout = "2.0.4"
+    const val fragment = "1.2.4"
 }
