@@ -22,6 +22,7 @@ dependencies {
     implementation("com.google.android.material:material:${Versions.material}")
     implementation("androidx.appcompat:appcompat:${Versions.appCompat}")
     implementation("androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}")
+    implementation("androidx.fragment:fragment-ktx:${Versions.fragment}")
 
     implementation("io.ktor:ktor-client-core:${Versions.ktor}")
     implementation("io.ktor:ktor-client-okhttp:${Versions.ktor}")
@@ -35,6 +36,8 @@ android {
         targetSdkVersion(30)
         versionCode = 1
         versionName = "1.0"
+
+        buildConfigField("String", "ENDPOINT", "\"http://10.0.2.2:8080\"")
     }
     buildTypes {
         getByName("release") {
